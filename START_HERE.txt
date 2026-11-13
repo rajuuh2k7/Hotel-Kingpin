@@ -1,0 +1,36 @@
+HOTEL KINGPIN — DINING AND SIDE MENU UPDATE
+
+WHAT IS NEW
+- Complete 26-item restaurant menu with Breakfast, Lunch, Snacks & Beverages, and Dinner
+- Idli, Poori, Veg Meals, Bagara Rice, Chicken Curry, Phulka with Paneer/Chicken, Chapathi and snacks
+- Menu is visible immediately, even before any room booking
+- Order form appears once the account has a confirmed (demo-paid) stay
+- Chapathi and plain phulka orders let you enter pieces (1 to 10)
+- Left slide-out navigation: Home, Rooms & Availability, Dining, My Stays, My Account, Sign in
+- Mobile swipe from the left edge (rightwards) opens the menu. Swipe left or tap x to close.
+- Existing registration/sign-in, 4 floors, 26 rooms, prices, room pictures and bookings kept
+
+IMPORTANT
+Food prices are SAMPLE amounts because exact old food prices were not provided. Edit src/model.hpp
+(dishes vector) to set your own menu pricing. Existing room rates remain unchanged.
+
+INSTALL ON WINDOWS CMD
+1. Make a backup of your current working HOTEL KINGPIN project folder before updating.
+2. Extract THIS complete ZIP (do not place it inside the old folder).
+3. In File Explorer, enter the extracted HOTEL_KINGPIN_DINING_SIDEMENU_UPDATED folder.
+4. Type cmd in the Explorer address bar and press Enter.
+5. Run these commands:
+   set "HOTEL_PORT=8093"
+   docker compose up -d --build
+   docker compose ps
+6. Open http://localhost:8093 and hard-refresh Ctrl+Shift+R.
+7. Sign in. Click Menu in the header, then Dining. Confirm all four sections.
+
+DATA SAFETY
+- Docker Compose service project name remains hotel-kingpin, matching the previous signed-in project.
+- Keep using the SAME Docker environment and project name to reuse the old hotel-kingpin_reservations volume.
+- DO NOT run docker compose down -v, prune volumes, or delete the old Docker volume.
+- If 8093 is already used by a different project and Compose cannot replace it, inspect docker compose ls
+  and docker compose ps first; do not delete unknown containers.
+- If you switch to a DIFFERENT Docker project name, your old bookings won't automatically appear.
+- Payment is simulated. Gmail/SMS ownership checks and real OTP are not enabled.

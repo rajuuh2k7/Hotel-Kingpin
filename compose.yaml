@@ -1,0 +1,11 @@
+name: hotel-kingpin
+services:
+  hotel:
+    build: .
+    ports:
+      - "127.0.0.1:${HOTEL_PORT:-8092}:8080"
+    volumes:
+      - reservations:/app/data
+    restart: unless-stopped
+volumes:
+  reservations:
