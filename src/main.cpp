@@ -201,15 +201,18 @@ string roomCard(const Room& room,string info,string action){
     string guests = room.bed()=="Double bed" ? "Best for 2 guests" : "Best for 1 guest";
     return "<article><img alt='"+room.type()+" "+room.bed()+" room' src='/static/photos/"+roomImage(room)+"'><div><p class='eyebrow'>"+"Room "+to_string(room.number())+" · Floor "+to_string(room.floor())+" · "+room.type()+"</p><h3>"+room.bed()+"</h3><p>"+price(room.nightlyRate())+" / night</p><p>"+guests+"</p>"+info+action+"</div></article>";
 }
-string menu(Store& db,string owner){
+string menu(Store& db,string owner,string category){
+    // Category filtering is handled entirely by C++; no client-side JavaScript needed.
+    if(category!="breakfast" && category!="lunch" && category!="snacks" && category!="dinner")
+        category="breakfast";
     string body="<div class='dining'><p class='eyebrow'>HOTEL KINGPIN · ROOM SERVICE</p><h1>Fresh from our kitchen.</h1>"
                 "<p>Breakfast, lunch, snacks and dinner — all in one place.</p></div>"
                 "<div class='menu-intro'><div><p class='eyebrow'>EXPLORE THE MENU</p><h2>What would you like to eat?</h2>"
                 "<p>Choose your favourites and order to your booked room. Delivery slots follow Indian Standard Time (IST).</p></div>"
                 "<div class='menu-summary'><strong>"+to_string(hotel.dishes.size())+"</strong><span>dishes and drinks</span></div></div>"
                 "<nav class='menu-categories' aria-label='Food categories'>"
-                "<a href='#breakfast'>☀ Breakfast</a><a href='#lunch'>◉ Lunch</a>"
-                "<a href='#snacks'>☕ Snacks</a><a href='#dinner'>☾ Dinner</a></nav>";
+                "<a href='/menu?category=breakfast'>☀ Breakfast</a><a href='/menu?category=lunch'>◉ Lunch</a>"
+                "<a href='/menu?category=snacks'>☕ Snacks</a><a href='/menu?category=dinner'>☾ Dinner</a></nav>";
     auto stays=db.query("SELECT id,room,arrival,departure FROM bookings WHERE owner=? AND status='paid' AND departure>? ORDER BY arrival",{owner,dateString(today())});
     if(stays.empty()){
         body+="<div class='menu-notice'><div><strong>Feel free to explore every dish!</strong>"
@@ -223,6 +226,7 @@ string menu(Store& db,string owner){
     const std::vector<string> ids{"breakfast","lunch","snacks","dinner"};
     const std::vector<string> icons{"☀","◉","☕","☾"};
     for(size_t s=0;s<hotel.slots.size();s++){
+        if(ids[s]!=category) continue; // Only render dishes from the selected meal.
         const auto& slot=hotel.slots[s];
         body+="<section class='food-section' id='"+ids[s]+"'><div class='food-section-top'>"
               "<div><p class='eyebrow'>"+icons[s]+" · "+slot.hours+" IST</p>"
@@ -413,7 +417,11 @@ int main(){
         Store db;db.query("UPDATE bookings SET status='cancelled' WHERE id=? AND owner=? AND status='hold'",{param(q,"id"),session(q)});
         r.set_redirect("/stays",303);
     });
-    app.Get("/menu",[](const Req& q,Res& r){Store db; page(r,"Room service",menu(db,session(q)));});
+    app.Get("/menu",[](const Req& q,Res& r){
+        Store db;
+        string category=q.has_param("category") ? param(q,"category") : "breakfast";
+        page(r,"Room service",menu(db,session(q),category));
+    });
     app.Post("/order",[](const Req& q,Res& r){
         if(session(q).empty()){r.set_redirect("/login",303);return;}
         auto idx=param(q,"dish"),qty=param(q,"qty"),day=param(q,"day"),id=param(q,"stay");
