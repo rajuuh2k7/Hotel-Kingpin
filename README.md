@@ -1,3 +1,20 @@
+
+## HOTEL KINGPIN - Deployment
+
+HOTEL KINGPIN is a hotel booking and management
+website developed using C++ and OOP concepts.
+
+### Technologies
+- C++ - Backend and booking logic
+- HTML & CSS - Website interface
+- SQLite - Database
+- Docker - Containerization
+- GitHub - Source code management
+- Render - Cloud deployment
+
+### Live Website
+https://hotel-kingpin.onrender.com
+
 # HOTEL KINGPIN — C++ / Docker Hotel Booking Site
 
 ## Current build: restaurant menu, side drawer, registration and login
